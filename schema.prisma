@@ -1,0 +1,119 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ============= KULLANICILAR =============
+
+model User {
+  id                Int       @id @default(autoincrement())
+  email             String    @unique
+  password          String
+  isEmailVerified   Boolean   @default(false)
+  emailVerificationSentAt DateTime?
+  passwordResetSentAt DateTime?
+  isAdmin           Boolean   @default(false)
+  
+  // İlişkiler
+  cart              Cart?
+  orders            Order[]
+  
+  createdAt         DateTime  @default(now())
+}
+
+// ============= ÜRÜNLER =============
+
+model Product {
+  id                Int       @id @default(autoincrement())
+  name              String
+  description       String?
+  price             Decimal   @db.Decimal(10, 2)
+  unit              String    // "kg", "adet", "demet", "kasa"
+  category          String    // "Meyve", "Sebze", "Organik"
+  imageUrl          String?
+  stock             Int       @default(0)
+  isAvailable       Boolean   @default(true)
+  minOrderQuantity  Int       @default(1)
+  
+  // İlişkiler
+  cartItems         CartItem[]
+  orderItems        OrderItem[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+// ============= SEPET =============
+
+model Cart {
+  id                Int        @id @default(autoincrement())
+  user              User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            Int        @unique
+  
+  // İlişkiler
+  items             CartItem[]
+  
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+}
+
+model CartItem {
+  id                Int      @id @default(autoincrement())
+  cart              Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  cartId            Int
+  product           Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId         Int
+  quantity          Int      @default(1)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@unique([cartId, productId])
+}
+
+// ============= SİPARİŞLER =============
+
+model Order {
+  id                Int         @id @default(autoincrement())
+  user              User        @relation(fields: [userId], references: [id])
+  userId            Int
+  
+  // Sipariş Bilgileri
+  orderNumber       String      @unique
+  status            String      @default("pending") // pending, confirmed, preparing, shipped, delivered, cancelled
+  totalPrice        Decimal     @db.Decimal(10, 2)
+  
+  // Teslimat Bilgileri
+  deliveryAddress   String
+  deliveryCity      String
+  deliveryPostalCode String
+  deliveryPhone     String
+  deliveryNotes     String?
+  
+  // Ödeme Bilgileri
+  paymentMethod     String      @default("credit_card") // credit_card, bank_transfer, cash_on_delivery
+  paymentStatus     String      @default("pending") // pending, paid, cancelled
+  
+  // İlişkiler
+  items             OrderItem[]
+  
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model OrderItem {
+  id                Int      @id @default(autoincrement())
+  order             Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId           Int
+  product           Product  @relation(fields: [productId], references: [id])
+  productId         Int
+  quantity          Int
+  price             Decimal  @db.Decimal(10, 2) // Sipariş anındaki fiyat
+  unit              String   // Sipariş anındaki birim
+  
+  createdAt         DateTime @default(now())
+}

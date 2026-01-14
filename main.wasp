@@ -1,0 +1,159 @@
+app FruvegMarket {
+  wasp: {
+    version: "^0.20.1"
+  },
+  title: "Fruveg Market - Frisches Obst & Gemüse",
+  
+  emailSender: {
+    provider: Dummy
+  },
+  
+  auth: {
+    userEntity: User,
+    methods: {
+      email: {
+        fromField: {
+          name: "Fruveg Market",
+          email: "noreply@fruveg.de"
+        },
+        emailVerification: {
+          clientRoute: EmailVerificationRoute
+        },
+        passwordReset: {
+          clientRoute: PasswordResetRoute
+        }
+      }
+    },
+    onAuthFailedRedirectTo: "/login",
+    onAuthSucceededRedirectTo: "/"
+  },
+
+  client: {
+    rootComponent: import { App } from "@src/client/App"
+  }
+}
+
+// ============= ROTALAR =============
+
+route AnaSayfaRoute { path: "/", to: AnaSayfa }
+page AnaSayfa {
+  component: import AnaSayfa from "@src/client/pages/AnaSayfa"
+}
+
+route LoginRoute { path: "/login", to: LoginPage }
+page LoginPage {
+  component: import Login from "@src/client/pages/auth/Login"
+}
+
+route SignupRoute { path: "/signup", to: SignupPage }
+page SignupPage {
+  component: import Signup from "@src/client/pages/auth/Signup"
+}
+
+route EmailVerificationRoute { path: "/email-verification", to: EmailVerificationPage }
+page EmailVerificationPage {
+  component: import EmailVerification from "@src/client/pages/auth/EmailVerification"
+}
+
+route PasswordResetRoute { path: "/password-reset", to: PasswordResetPage }
+page PasswordResetPage {
+  component: import PasswordReset from "@src/client/pages/auth/PasswordReset"
+}
+
+route UrunlerRoute { path: "/urunler", to: UrunlerPage }
+page UrunlerPage {
+  component: import Urunler from "@src/client/pages/Urunler"
+}
+
+route SepetRoute { path: "/sepet", to: SepetPage }
+page SepetPage {
+  authRequired: true,
+  component: import Sepet from "@src/client/pages/Sepet"
+}
+
+route OdemeRoute { path: "/odeme", to: OdemePage }
+page OdemePage {
+  authRequired: true,
+  component: import Odeme from "@src/client/pages/Odeme"
+}
+
+route SiparislerimRoute { path: "/siparislerim", to: SiparislerimPage }
+page SiparislerimPage {
+  authRequired: true,
+  component: import Siparislerim from "@src/client/pages/Siparislerim"
+}
+
+route AdminRoute { path: "/admin", to: AdminPage }
+page AdminPage {
+  authRequired: true,
+  component: import Admin from "@src/client/pages/Admin"
+}
+
+// ============= QUERIES =============
+
+query getProducts {
+  fn: import { getProducts } from "@src/server/queries",
+  entities: [Product]
+}
+
+query getCart {
+  fn: import { getCart } from "@src/server/queries",
+  entities: [Cart, CartItem, Product, User]
+}
+
+query getMyOrders {
+  fn: import { getMyOrders } from "@src/server/queries",
+  entities: [Order, OrderItem, Product, User]
+}
+
+query getAllOrders {
+  fn: import { getAllOrders } from "@src/server/queries",
+  entities: [Order, OrderItem, Product, User]
+}
+
+// ============= ACTIONS =============
+
+action addToCart {
+  fn: import { addToCart } from "@src/server/actions",
+  entities: [Cart, CartItem, Product, User]
+}
+
+action updateCartItem {
+  fn: import { updateCartItem } from "@src/server/actions",
+  entities: [CartItem, Cart]
+}
+
+action removeFromCart {
+  fn: import { removeFromCart } from "@src/server/actions",
+  entities: [CartItem, Cart]
+}
+
+action clearCart {
+  fn: import { clearCart } from "@src/server/actions",
+  entities: [Cart, CartItem]
+}
+
+action createOrder {
+  fn: import { createOrder } from "@src/server/actions",
+  entities: [Order, OrderItem, Cart, CartItem, Product, User]
+}
+
+action updateOrderStatus {
+  fn: import { updateOrderStatus } from "@src/server/actions",
+  entities: [Order, User]
+}
+
+action createProduct {
+  fn: import { createProduct } from "@src/server/actions",
+  entities: [Product, User]
+}
+
+action updateProduct {
+  fn: import { updateProduct } from "@src/server/actions",
+  entities: [Product, User]
+}
+
+action deleteProduct {
+  fn: import { deleteProduct } from "@src/server/actions",
+  entities: [Product, User]
+}
