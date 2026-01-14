@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { addToCart } from 'wasp/client/operations';
-import { useTranslation } from '../i18n';
 
 interface ProductCardProps {
   product: {
@@ -18,15 +17,14 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const [quantity, setQuantity] = useState(product.minOrderQuantity);
   const [adding, setAdding] = useState(false);
-  const { t } = useTranslation();
 
   const handleAddToCart = async () => {
     try {
       setAdding(true);
       await addToCart({ productId: product.id, quantity });
-      alert(t('productAdded'));
+      alert('Produkt wurde zum Warenkorb hinzugefügt!');
     } catch (error: any) {
-      alert(error.message || t('error'));
+      alert(error.message || 'Ein Fehler ist aufgetreten');
     } finally {
       setAdding(false);
     }
@@ -97,12 +95,12 @@ export default function ProductCard({ product }: ProductCardProps) {
           disabled={adding}
           className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition disabled:bg-gray-400"
         >
-          {adding ? t('adding') : t('addToCart')}
+          {adding ? 'Wird hinzugefügt...' : 'In den Warenkorb'}
         </button>
 
         {product.minOrderQuantity > 1 && (
           <p className="text-xs text-gray-500 mt-2">
-            {t('minOrder')}: {product.minOrderQuantity} {product.unit}
+            Mindestbestellmenge: {product.minOrderQuantity} {product.unit}
           </p>
         )}
       </div>

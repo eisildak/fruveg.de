@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 100">
+  <defs>
+    <style>
+      .text { font-family: sans-serif; font-weight: bold; font-size: 60px; fill: #166534; }
+      .icon { fill: #22c55e; }
+    </style>
+  </defs>
+  <!-- Abstract Fruit Shape -->
+  <path class="icon" d="M40 30 Q 60 10 80 30 Q 100 50 80 70 Q 60 90 40 70 Q 20 50 40 30 Z" />
+  <path class="icon" d="M60 20 Q 70 5 80 20" fill="none" stroke="#15803d" stroke-width="3" />
+  
+  <!-- Text -->
+  <text x="100" y="70" class="text">FRUVEG</text>
+</svg>

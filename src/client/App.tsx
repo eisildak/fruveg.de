@@ -1,11 +1,11 @@
 import React from 'react';
-import { Link } from 'wasp/client/router';
+import { Outlet } from 'react-router-dom';
 import './Main.css';
 
-export function App({ children }: { children: React.ReactNode }) {
+export function App() {
   return (
     <div className="min-h-screen bg-gray-50">
-      {children}
+      <Outlet />
     </div>
   );
 }

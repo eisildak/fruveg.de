@@ -12,20 +12,24 @@ app FruvegMarket {
     userEntity: User,
     methods: {
       email: {
+        userSignupFields: import { userSignupFields } from "@src/server/auth",
         fromField: {
           name: "Fruveg Market",
-          email: "noreply@fruveg.de"
+          email: "onboarding@resend.dev"
         },
         emailVerification: {
-          clientRoute: EmailVerificationRoute
+          clientRoute: EmailVerificationRoute,
+          getEmailContentFn: import { getVerificationEmailContent } from "@src/server/auth"
         },
         passwordReset: {
-          clientRoute: PasswordResetRoute
+          clientRoute: PasswordResetRoute,
+          getEmailContentFn: import { getPasswordResetEmailContent } from "@src/server/auth"
         }
       }
     },
+    onAuthSucceededRedirectTo: "/",
     onAuthFailedRedirectTo: "/login",
-    onAuthSucceededRedirectTo: "/"
+    onAfterSignup: import { onAfterSignup } from "@src/server/auth"
   },
 
   client: {
